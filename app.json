@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "quick-job-mobile",
+    "slug": "quick-job-mobile",
+    "version": "1.0.0",
+    "assetBundlePatterns": [
+      "**/*"
+    ]
+  },
+  "name": "quick-job-mobile"
+}
