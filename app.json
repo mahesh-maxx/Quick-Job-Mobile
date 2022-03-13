@@ -1,11 +1,34 @@
 {
   "expo": {
-    "name": "quick-job-mobile",
+    "name": "Quick Job",
     "slug": "quick-job-mobile",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ]
+    ],
+    "orientation": "portrait",
+    "icon": "./assets/logo.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/logo.png",
+        "backgroundColor": "#FFFFFF"
+      },
+      "package": "com.bylancer.quickjob"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
   },
   "name": "quick-job-mobile"
 }
