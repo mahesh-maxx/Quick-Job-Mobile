@@ -62,6 +62,7 @@ export default class LoginScreen extends Component {
             <View style={{flex:1,alignItems:'center',marginTop:20}}>
             <TouchableOpacity
          style={styles.button}
+         onPress={() => this.props.navigation.navigate('Dashboard')}
        >
          <Text style={{color:'#fff'}}> Login </Text>
  </TouchableOpacity>

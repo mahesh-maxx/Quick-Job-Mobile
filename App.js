@@ -1,27 +1,113 @@
 import React from 'react';
-import { SafeAreaProvider} from 'react-native-safe-area-context';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Component } from 'react';
+import 'react-native-gesture-handler'
+import { Image,View,TouchableOpacity } from 'react-native'
+import { createStackNavigator } from 'react-navigation-stack';
+import { createDrawerNavigator } from 'react-navigation-drawer'
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import FlashScreen from './components/FlashScreen'
 import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen';
 import ForgetpasswordScreen from './components/ForgetPassword';
+import DashboardScreen from './components/Dashboard';
+import { Ionicons } from '@expo/vector-icons'; 
 
-const Stack = createNativeStackNavigator(); 
 
-export default function App() {
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Flash" screenOptions={{headerShown: false}}>
-          <Stack.Screen name="Flash" component={FlashScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="Forget" component={ForgetpasswordScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
-  );
+class NavigationDrawerStructure extends Component {
+
+  toggleDrawer = () => {
+    this.props.navigationProps.openDrawer();
+  };
+
+  render() {
+    return (
+      <View style={{ flexDirection: "row" }}>
+        <TouchableOpacity style={{ marginRight: 10 }} >
+        <Ionicons name="notifications" size={30} color="#6b76ff" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
+          {/*Donute Button Image */}
+          <Image
+            source={require("./assets/logo.png")}
+            style={{ width: 30, height: 30, marginRight: 7, borderRadius: 50, borderColor:'#6b76ff',borderWidth:1 }}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  }
 }
+
+const AuthStack = createStackNavigator(
+  {
+    Login: LoginScreen,
+    Register: RegisterScreen,
+    Forget: ForgetpasswordScreen
+  }
+); 
+
+const DashboardStackNavigator = createStackNavigator(
+  {
+    Dashboard:{
+      screen: DashboardScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: "Hello John,",
+        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTintColor: "#6b76ff",
+      }),
+    }
+  }
+); 
+
+const Drawer = createDrawerNavigator(
+  {
+    Screen1: {
+      screen: DashboardStackNavigator,
+      navigationOptions: {
+        drawerLabel: "DashBoard",
+        drawerIcon: (
+          <Image
+            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
+            source={require("./assets/icon.png")}
+          />
+        ),
+      },  
+    },
+  Dashboard: {
+    name: 'Dashboard',
+    screen: DashboardStackNavigator
+  },
+  
+},{
+  drawerPosition:'right',
+  contentOptions:{
+    itemStyle:{
+      marginTop:23,
+      alignItems:'center'
+    }
+  }
+});
+
+const DrawerNavigator = createStackNavigator({
+  Drawer: { screen: Drawer, navigationOptions: { header: null } },
+});
+
+const AppStack = DrawerNavigator
+
+export default createAppContainer(
+  createSwitchNavigator(
+    {
+      Flash: FlashScreen,
+      App: AppStack,
+      Auth: AuthStack
+    },
+    {
+      initialRouteName: "Flash",
+    }
+  )
+);
+
 
 
