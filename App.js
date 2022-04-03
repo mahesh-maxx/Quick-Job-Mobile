@@ -11,6 +11,10 @@ import RegisterScreen from './components/RegisterScreen';
 import ForgetpasswordScreen from './components/ForgetPassword';
 import DashboardScreen from './components/Dashboard';
 import { Ionicons } from '@expo/vector-icons'; 
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Home from './components/Home';
+import JobCategoryScreen from './components/JobCategory';
 
 
 class NavigationDrawerStructure extends Component {
@@ -18,7 +22,7 @@ class NavigationDrawerStructure extends Component {
   toggleDrawer = () => {
     this.props.navigationProps.openDrawer();
   };
-
+  
   render() {
     return (
       <View style={{ flexDirection: "row" }}>
@@ -33,6 +37,7 @@ class NavigationDrawerStructure extends Component {
           />
         </TouchableOpacity>
       </View>
+      
     );
   }
 }
@@ -48,7 +53,7 @@ const AuthStack = createStackNavigator(
 const DashboardStackNavigator = createStackNavigator(
   {
     Dashboard:{
-      screen: DashboardScreen,
+      screen: Home,
       navigationOptions: ({ navigation }) => ({
         title: "Hello John,",
         headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
@@ -74,12 +79,7 @@ const Drawer = createDrawerNavigator(
           />
         ),
       },  
-    },
-  Dashboard: {
-    name: 'Dashboard',
-    screen: DashboardStackNavigator
-  },
-  
+    }
 },{
   drawerPosition:'right',
   contentOptions:{
@@ -91,7 +91,7 @@ const Drawer = createDrawerNavigator(
 });
 
 const DrawerNavigator = createStackNavigator({
-  Drawer: { screen: Drawer, navigationOptions: { header: null } },
+  Drawer: { screen: Drawer, navigationOptions: { headerShown: false } }
 });
 
 const AppStack = DrawerNavigator
