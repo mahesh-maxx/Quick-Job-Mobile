@@ -7,10 +7,19 @@ import SavedJobScreen from './Saved';
 import ProfileScreen from './Profile';
 import ChatScreen from './Chat';
 import JobCategoryScreen from './JobCategory';
-import { createStackNavigator } from 'react-navigation-stack';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { Image,View,TouchableOpacity } from 'react-native'
+
 
 const Tab = createBottomTabNavigator();
+const BackButton =({navigation})=>{
+  return(
+    <View style={{ flexDirection: "row",borderRadius:10,backgroundColor:'#bddfff' }}>
+       <TouchableOpacity onPress={()=> navigation.navigate("Home")} >
+       <Ionicons name="chevron-back-sharp" size={24} color="#6b76ff" />
+        </TouchableOpacity>
+    </View>
+  )
+}
 
 export default class Home extends Component {
   constructor(props){
@@ -78,6 +87,14 @@ export default class Home extends Component {
         />
         <Tab.Screen name="Saved" component={SavedJobScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="JobCategory" component={JobCategoryScreen} options={({ navigation }) => ({
+          title:'What job you want?',
+          headerLeft:()=> <BackButton navigation={navigation} />,
+          headerShown:true,
+          tabBarIcon:null,
+          headerStatusBarHeight:2,
+          tabBarButton:()=>{return null},
+        })} />
       </Tab.Navigator>
     </NavigationContainer>
   );

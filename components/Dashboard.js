@@ -84,7 +84,6 @@ export default class DashboardScreen extends Component{
 
   getCurrentLocation = async () =>{
     let { status } = await Location.requestForegroundPermissionsAsync();
-    console.log("sta ",status)
       if (status !== 'granted') {
         this.setState({
           errorMsg: 'new error'
@@ -99,7 +98,6 @@ export default class DashboardScreen extends Component{
 
   getGeocodeAsync = async (locat) => {
     let location = await Location.reverseGeocodeAsync(locat)
-    console.log("loca ",location)
     this.setState({ location })
   }
 

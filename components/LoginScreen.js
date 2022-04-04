@@ -17,7 +17,7 @@ export default class LoginScreen extends Component {
 
     render(){
         return (
-          <View style={{ flex: 1, marginTop:30,backgroundColor:'white'}}>
+          <View style={{ flex: 1,backgroundColor:'white'}}>
             <View style={{alignItems: 'center',marginTop: 60}}>
               <Text style={{textAlign: 'center',width:300, fontSize:20,marginTop:30}}>Welcome Back!</Text>
               <Text style={{textAlign: 'center', fontSize:14,marginTop:10,marginBottom:30}}>Don't have an account? 
