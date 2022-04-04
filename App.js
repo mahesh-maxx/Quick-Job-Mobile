@@ -11,11 +11,10 @@ import RegisterScreen from './components/RegisterScreen';
 import ForgetpasswordScreen from './components/ForgetPassword';
 import DashboardScreen from './components/Dashboard';
 import { Ionicons } from '@expo/vector-icons'; 
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './components/Home';
-import JobCategoryScreen from './components/JobCategory';
-
+import NotificationScreen from './components/Notifications';
 
 class NavigationDrawerStructure extends Component {
 
@@ -26,7 +25,7 @@ class NavigationDrawerStructure extends Component {
   render() {
     return (
       <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={{ marginRight: 10 }} >
+        <TouchableOpacity style={{ marginRight: 10 }} onPress={()=>this.props.navigationProps.navigate('Notification')} >
         <Ionicons name="notifications" size={30} color="#6b76ff" />
         </TouchableOpacity>
         <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
@@ -91,7 +90,8 @@ const Drawer = createDrawerNavigator(
 });
 
 const DrawerNavigator = createStackNavigator({
-  Drawer: { screen: Drawer, navigationOptions: { headerShown: false } }
+  Drawer: { screen: Drawer, navigationOptions: { headerShown: false } },
+  Notification:{screen:NotificationScreen,navigationOptions: { title: "Notifications" }}
 });
 
 const AppStack = DrawerNavigator

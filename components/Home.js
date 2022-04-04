@@ -47,7 +47,7 @@ export default class Home extends Component {
             } else if (route.name === 'Saved') {
               return (
                 <Ionicons
-                  name={focused ? 'ribbon' : 'ribbon-outline'}
+                  name={focused ? 'bookmark' : 'bookmark-outline'}
                   size={size}
                   color={color}
                 />

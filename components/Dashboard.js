@@ -200,14 +200,18 @@ export default class DashboardScreen extends Component{
                 <Octicons name="primitive-dot" size={10} color="#4267B2" style={{textAlignVertical:'center',paddingLeft:10}} />
                 <Text style={{fontSize:12,paddingLeft:10,color:'#4267B2'}} >{jobLists.type}</Text>
                 </View>
-                <View style={{ margin: 10 }}>
+                <View style={{ margin: 10,flexDirection:'row' }}>
                         <TouchableOpacity
                             style={styles.applybutton}
                            
                         >
                             <Text style={{color:'#fff',fontSize:12}}> Apply </Text>
                         </TouchableOpacity>
-
+                        <Ionicons
+                  name={'bookmark-outline'}
+                  size={24}
+                  color='#000'
+                />
                     </View>
               </View>)}
               </ScrollView>
@@ -247,6 +251,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4267B2',
     width: 60,
     height: 20,
-    borderRadius: 20
+    borderRadius: 20,
+    marginRight:5
 }
 });
