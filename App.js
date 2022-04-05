@@ -17,6 +17,7 @@ import Home from './components/Home';
 import NotificationScreen from './components/Notifications';
 import ProfileScreen from './components/Profile';
 import SavedJobScreen from './components/Saved';
+import ChatScreen from './components/Chat';
 
 class NavigationDrawerStructure extends Component {
 
@@ -99,6 +100,22 @@ const SavedStackNavigator = createStackNavigator(
   }
 ); 
 
+const ChatStackNavigator = createStackNavigator(
+  {
+    Dashboard:{
+      screen: ChatScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: "Messages",
+        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTintColor: "#6b76ff",
+      }),
+    }
+  }
+); 
+
 const Drawer = createDrawerNavigator(
   {
     Screen1: {
@@ -136,12 +153,24 @@ const Drawer = createDrawerNavigator(
           />
         ),
       }, 
+    },
+    screen4:{
+      screen: ChatStackNavigator,
+      navigationOptions: {
+        drawerLabel: "Messages",
+        drawerIcon: (
+          <Image
+            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
+            source={require("./assets/icon.png")}
+          />
+        ),
+      }, 
     }
 },{
   drawerPosition:'right',
   contentOptions:{
     itemStyle:{
-      marginTop:23,
+      marginTop:20,
       alignItems:'center'
     }
   }
