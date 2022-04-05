@@ -3,7 +3,7 @@ import { RadioButton } from 'react-native-paper';
 import * as React from 'react';
 import DatePicker from 'react-native-datepicker';
 const { width } = Dimensions.get('window');
-import ReactChipsInput from 'react-native-chips';
+import ReactChipsInput from './helper/react-chips';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export default class ProfileScreen extends React.Component {
@@ -221,7 +221,7 @@ export default class ProfileScreen extends React.Component {
     onChangeChips={(chips) => this.setState({skills:chips})} 
     alertRequired={true} 
     chipStyle={{ borderColor: 'blue', backgroundColor: 'grey' }} 
-    inputStyle={{fontSize: 16}} 
+    inputStyle={{fontSize: 14}} 
     labelStyle={{ color: 'blue'}} 
     labelOnBlur={{ color: '#666' }}
     editEnable={this.state.skillEdit} />
