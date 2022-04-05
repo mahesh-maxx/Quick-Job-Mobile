@@ -15,6 +15,8 @@ import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './components/Home';
 import NotificationScreen from './components/Notifications';
+import ProfileScreen from './components/Profile';
+import SavedJobScreen from './components/Saved';
 
 class NavigationDrawerStructure extends Component {
 
@@ -65,6 +67,38 @@ const DashboardStackNavigator = createStackNavigator(
   }
 ); 
 
+const ProfileStackNavigator = createStackNavigator(
+  {
+    Dashboard:{
+      screen: ProfileScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: "My Profile",
+        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTintColor: "#6b76ff",
+      }),
+    }
+  }
+); 
+
+const SavedStackNavigator = createStackNavigator(
+  {
+    Dashboard:{
+      screen: SavedJobScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: "Saved Job",
+        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTintColor: "#6b76ff",
+      }),
+    }
+  }
+); 
+
 const Drawer = createDrawerNavigator(
   {
     Screen1: {
@@ -78,6 +112,30 @@ const Drawer = createDrawerNavigator(
           />
         ),
       },  
+    },
+    screen2:{
+      screen: ProfileStackNavigator,
+      navigationOptions: {
+        drawerLabel: "My Profile",
+        drawerIcon: (
+          <Image
+            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
+            source={require("./assets/icon.png")}
+          />
+        ),
+      }, 
+    },
+    screen3:{
+      screen: SavedStackNavigator,
+      navigationOptions: {
+        drawerLabel: "Saved Job",
+        drawerIcon: (
+          <Image
+            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
+            source={require("./assets/icon.png")}
+          />
+        ),
+      }, 
     }
 },{
   drawerPosition:'right',
@@ -91,7 +149,9 @@ const Drawer = createDrawerNavigator(
 
 const DrawerNavigator = createStackNavigator({
   Drawer: { screen: Drawer, navigationOptions: { headerShown: false } },
-  Notification:{screen:NotificationScreen,navigationOptions: { title: "Notifications" }}
+  Notification:{screen:NotificationScreen,navigationOptions: { title: "Notifications" }},
+  Profile:{screen:ProfileScreen,navigationOptions: { title: "Profile" }},
+
 });
 
 const AppStack = DrawerNavigator
