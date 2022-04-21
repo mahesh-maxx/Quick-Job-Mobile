@@ -18,6 +18,7 @@ import NotificationScreen from './components/Notifications';
 import ProfileScreen from './components/Profile';
 import SavedJobScreen from './components/Saved';
 import ChatScreen from './components/Chat';
+import AppIntro from './components/Appintro';
 
 class NavigationDrawerStructure extends Component {
 
@@ -179,7 +180,9 @@ const Drawer = createDrawerNavigator(
 const DrawerNavigator = createStackNavigator({
   Drawer: { screen: Drawer, navigationOptions: { headerShown: false } },
   Notification:{screen:NotificationScreen,navigationOptions: { title: "Notifications" }},
+  AppIntro:{screen:AppIntro,navigationOptions: { headerShown: false }},
   Profile:{screen:ProfileScreen,navigationOptions: { title: "Profile" }},
+
 
 });
 
