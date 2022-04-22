@@ -9,10 +9,7 @@ import FlashScreen from './components/FlashScreen'
 import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen';
 import ForgetpasswordScreen from './components/ForgetPassword';
-import DashboardScreen from './components/Dashboard';
 import { Ionicons } from '@expo/vector-icons'; 
-import { NavigationContainer, ThemeProvider } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Home from './components/Home';
 import NotificationScreen from './components/Notifications';
 import ProfileScreen from './components/Profile';
@@ -28,16 +25,27 @@ class NavigationDrawerStructure extends Component {
   
   render() {
     return (
-      <View style={{ flexDirection: "row" }}>
-        <TouchableOpacity style={{ marginRight: 10 }} onPress={()=>this.props.navigationProps.navigate('Notification')} >
-        <Ionicons name="notifications" size={30} color="#6b76ff" />
-        </TouchableOpacity>
+      <View style={{ flexDirection: "row" ,justifyContent:'space-around' }}>
         <TouchableOpacity onPress={this.toggleDrawer.bind(this)}>
           {/*Donute Button Image */}
-          <Image
-            source={require("./assets/logo.png")}
-            style={{ width: 30, height: 30, marginRight: 7, borderRadius: 50, borderColor:'#6b76ff',borderWidth:1 }}
-          />
+          <Ionicons name="menu" size={30} color="#fff" />
+        </TouchableOpacity>
+      </View>
+      
+    );
+  }
+}
+
+class NotificationButton extends Component {
+
+  render() {
+    return (
+      <View style={{ flexDirection: "row",justifyContent:'space-around' }}>
+        <TouchableOpacity style={{ marginRight: 10 }} >
+        <Ionicons name="search" size={28} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={{ marginRight: 10 }} onPress={()=>this.props.navigationProps.navigate('Notification')} >
+        <Ionicons name="notifications" size={28} color="#fff" />
         </TouchableOpacity>
       </View>
       
@@ -59,11 +67,12 @@ const DashboardStackNavigator = createStackNavigator(
       screen: Home,
       navigationOptions: ({ navigation }) => ({
         title: "Hello John,",
-        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#653ef0",
         },
-        headerTintColor: "#6b76ff",
+        headerTintColor: "#fff",
       }),
     }
   }
@@ -75,11 +84,12 @@ const ProfileStackNavigator = createStackNavigator(
       screen: ProfileScreen,
       navigationOptions: ({ navigation }) => ({
         title: "My Profile",
-        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#653ef0",
         },
-        headerTintColor: "#6b76ff",
+        headerTintColor: "#fff",
       }),
     }
   }
@@ -91,11 +101,12 @@ const SavedStackNavigator = createStackNavigator(
       screen: SavedJobScreen,
       navigationOptions: ({ navigation }) => ({
         title: "Saved Job",
-        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#653ef0",
         },
-        headerTintColor: "#6b76ff",
+        headerTintColor: "#fff",
       }),
     }
   }
@@ -107,11 +118,12 @@ const ChatStackNavigator = createStackNavigator(
       screen: ChatScreen,
       navigationOptions: ({ navigation }) => ({
         title: "Messages",
-        headerRight:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
-          backgroundColor: "#fff",
+          backgroundColor: "#653ef0",
         },
-        headerTintColor: "#6b76ff",
+        headerTintColor: "#fff",
       }),
     }
   }
@@ -124,10 +136,11 @@ const Drawer = createDrawerNavigator(
       navigationOptions: {
         drawerLabel: "DashBoard",
         drawerIcon: (
-          <Image
-            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
-            source={require("./assets/icon.png")}
-          />
+          <Ionicons
+          name={'home-sharp'}
+          size={25}
+          color="#653ef0"
+        />
         ),
       },  
     },
@@ -136,10 +149,11 @@ const Drawer = createDrawerNavigator(
       navigationOptions: {
         drawerLabel: "My Profile",
         drawerIcon: (
-          <Image
-            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
-            source={require("./assets/icon.png")}
-          />
+          <Ionicons
+                  name={'person'}
+                  size={25}
+                  color="#653ef0"
+                />
         ),
       }, 
     },
@@ -148,10 +162,11 @@ const Drawer = createDrawerNavigator(
       navigationOptions: {
         drawerLabel: "Saved Job",
         drawerIcon: (
-          <Image
-            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
-            source={require("./assets/icon.png")}
-          />
+          <Ionicons
+                  name={'bookmark'}
+                  size={25}
+                  color="#653ef0"
+                />
         ),
       }, 
     },
@@ -160,15 +175,16 @@ const Drawer = createDrawerNavigator(
       navigationOptions: {
         drawerLabel: "Messages",
         drawerIcon: (
-          <Image
-            style={{ width: 25, height: 20, marginBottom: 0, marginTop: 10 }}
-            source={require("./assets/icon.png")}
-          />
+          <Ionicons
+                  name={'chatbubbles'}
+                  size={25}
+                  color="#653ef0"
+                />
         ),
       }, 
     }
 },{
-  drawerPosition:'right',
+  drawerPosition:'left',
   contentOptions:{
     itemStyle:{
       marginTop:20,
