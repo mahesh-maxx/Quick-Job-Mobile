@@ -6,6 +6,7 @@ import { View, TouchableOpacity, Image } from 'react-native';
 export default class FlashScreen extends Component{
   constructor(props){
     super(props);
+    global.baseUrl = "https://hireonejobs.com/api"
   }
 
   componentDidMount(){
@@ -16,8 +17,8 @@ export default class FlashScreen extends Component{
 
   async reDirect(){
     const appIntro =  await AsyncStorageLib.getItem('Appintro');
-    console.log("App intro ",appIntro)
-    appIntro == 'true' ? this.props.navigation.navigate('Login') : this.props.navigation.navigate('AppIntro')
+    const token = await AsyncStorageLib.getItem('userToken')
+    appIntro == 'true' ? token != null ? this.props.navigation.navigate('Dashboard') : this.props.navigation.navigate('Login')  : this.props.navigation.navigate('AppIntro')
   }
   render() {
   return (

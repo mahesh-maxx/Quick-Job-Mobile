@@ -2,21 +2,93 @@ import { Component } from 'react';
 import { StyleSheet, Text, View,Button, TouchableOpacity, Image, TextInput,Alert,Dimensions } from 'react-native';
 import CheckBox from 'expo-checkbox';
 import { EvilIcons,Entypo } from '@expo/vector-icons';
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const win = Dimensions.get('window');
 
 export default class LoginScreen extends Component {
     constructor(props){
       super(props);
       this.state = {
-        email:"",
+        username:"",
         password:"",
         showPass:false,
         baseUrl:global.baseUrl
       }
     }
 
+    getProfileData=(userid,token)=>{
+      var url = this.state.baseUrl + '/profile';
+      let data = new FormData()
+      data.append('userid',userid);
+      data.append('user_type','user');
+      var httpHeaders = { 'Authorization' : `bearer ${token}`};
+      var myHeaders = new Headers(httpHeaders);
+      fetch(url, {
+        method: 'POST',
+        body: data,
+        headers:myHeaders
+      }).then(function (response) {
+        return response.json();
+      }).then((result)=>{
+        AsyncStorageLib.setItem('UserName',`${result.result.firstname}`)
+        const userName=  `${result.result.firstname}`
+        this.props.navigation.navigate("Dashboard",{title:userName})
+      }).catch((err)=>{
+        console.log("err ",err)
+      })
+      
+    }
+
+    login=()=>{
+      var url = this.state.baseUrl + '/login';
+      let data = new FormData()
+      data.append('username',this.state.username);
+      data.append('password',this.state.password);
+      fetch(url, {
+        method: 'POST',
+        body: data
+      }).then(function (response) {
+        return response.json();
+      }).then((result)=>{
+        if(result.message== 'User Login Successfully.'){
+          AsyncStorageLib.setItem('userToken',result.token)
+          AsyncStorageLib.setItem('currentUserId',toString (result.user_id))
+          this.getProfileData(result.user_id,result.token)
+        } else if(result.message === 'Password mismatch' ||result.message === 'User does not exist'){
+          Alert.alert(
+            'Login Error',
+           'The username` or password you entered is not valid',
+           [
+             
+              {text: 'OK', onPress: () => console.log('Cancel Pressed'), 
+        
+         },
+             
+           ],
+           {cancelable: false})
+        }
+        else {
+          Alert.alert(
+            'Login Error',
+           'Something went wrong. Please try again later.',
+           [
+             
+              {text: 'OK', onPress: () => this.props.navigation.popToTop(), 
+        
+         },
+             
+           ],
+           {cancelable: false})
+        }
+      }).catch((err)=>{
+        console.log("err ",err)
+      })
+    }
+
     render(){
         return (
+          <KeyboardAwareScrollView>
           <View style={{ flex: 1,backgroundColor:'white'}}>
             <View style={{alignItems: 'center',marginTop: 60}}>
               <Text style={{textAlign: 'center',width:300, fontSize:20,marginTop:30}}>Welcome Back!</Text>
@@ -45,9 +117,9 @@ export default class LoginScreen extends Component {
           
             <View style={styles.usernameSection}>
             <EvilIcons name="user" size={28} color="black" style={styles.userIcon} />
-              <TextInput placeholder="Username / Email Address" background="transparent" style={styles.input}
-              value={this.state.email}
-              onChangeText={(email) => this.setState({ email })} />
+              <TextInput placeholder="Username" background="transparent" style={styles.input}
+              value={this.state.username}
+              onChangeText={(username) => this.setState({ username })} />
             </View>
             <View style={styles.usernameSection}>
             <Entypo name="eye-with-line" size={24} color="black" style={styles.userIcon} />
@@ -61,13 +133,15 @@ export default class LoginScreen extends Component {
             </View>
             <View style={{flex:1,alignItems:'center',marginTop:20}}>
             <TouchableOpacity
+            disabled={this.state.password == "" || this.state.username == ""}
          style={styles.button}
-         onPress={() => this.props.navigation.navigate('Dashboard')}
+         onPress={this.login}
        >
          <Text style={{color:'#fff'}}> Login </Text>
  </TouchableOpacity>
  </View>
           </View>
+          </KeyboardAwareScrollView>
         );
         }
 }

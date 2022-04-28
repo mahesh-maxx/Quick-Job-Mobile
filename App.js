@@ -1,7 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
 import 'react-native-gesture-handler'
-import { Image,View,TouchableOpacity } from 'react-native'
+import { Alert,View,TouchableOpacity,SafeAreaView,Text } from 'react-native'
 import { createStackNavigator } from 'react-navigation-stack';
 import { createDrawerNavigator } from 'react-navigation-drawer'
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
@@ -16,7 +16,13 @@ import ProfileScreen from './components/Profile';
 import SavedJobScreen from './components/Saved';
 import ChatScreen from './components/Chat';
 import AppIntro from './components/Appintro';
+import AsyncStorageLib from '@react-native-async-storage/async-storage';
+import {DrawerItems} from 'react-navigation-drawer'
 
+const user ={}
+AsyncStorageLib.getItem('UserName').then((name)=>{
+  user['name']=name
+})
 class NavigationDrawerStructure extends Component {
 
   toggleDrawer = () => {
@@ -53,6 +59,60 @@ class NotificationButton extends Component {
   }
 }
 
+function setTitle(navigation) {
+  const { params } = navigation.state;
+  const title = params && params.title  ? `Hello ${params.title}` : user?.name != null ? `Hello ${user.name}` : "Hello User"
+  return title
+}
+
+class ContentComponent extends Component {
+
+   logOut=()=> {
+    AsyncStorageLib.removeItem("currentUserId");
+    AsyncStorageLib.removeItem("userToken");
+    AsyncStorageLib.removeItem("userName");
+    Alert.alert(
+      "Logout",
+      "You have been logged out.",
+      [
+        {
+          text: "OK",
+          onPress: () => this.props.navigation.navigate("Login"),
+        },
+      ],
+      { cancelable: false }
+    );
+  }
+  
+  onloggedout=()=> {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => this.logOut() },
+      ],
+      { cancelable: false }
+    );
+  }
+  render(){return (
+          <View style={{flex:1}}>
+              <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+                  <DrawerItems {...this.props} />
+                 <TouchableOpacity style={{flexDirection:'row',marginTop:8}} onPress={this.onloggedout}>
+                 <Ionicons style={{marginLeft:17}} name="exit" size={25} color="#653ef0" />
+                  <Text style={{marginLeft:30,fontSize:14,fontWeight:'700'}}  >Log Out</Text>
+                 </TouchableOpacity>
+              </SafeAreaView>
+          </View>
+  )
+  }
+}
+
 const AuthStack = createStackNavigator(
   {
     Login: LoginScreen,
@@ -66,7 +126,7 @@ const DashboardStackNavigator = createStackNavigator(
     Dashboard:{
       screen: Home,
       navigationOptions: ({ navigation }) => ({
-        title: "Hello John,",
+        title: setTitle(navigation),
         headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
         headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
@@ -182,8 +242,13 @@ const Drawer = createDrawerNavigator(
                 />
         ),
       }, 
-    }
-},{
+    },
+    
+},
+{
+  contentComponent: props => <ContentComponent {...props} />
+},
+{
   drawerPosition:'left',
   contentOptions:{
     itemStyle:{

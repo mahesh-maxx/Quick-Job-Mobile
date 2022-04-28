@@ -50,6 +50,13 @@ export default class AppIntro extends Component {
         this.setState({currentPage:screenIndex})
         this.scrollViewRef.current?.scrollTo({x: width * screenIndex, animated: true});
      };
+
+     proceedTo() {
+        AsyncStorageLib.setItem('Appintro','true')
+        const token = AsyncStorageLib.getItem('userToken')
+        const userName = AsyncStorageLib.getItem('UserName')
+        token != "" ? this.props.navigation.navigate('Login') :  this.props.navigation.navigate('Dashboard',{title:userName})
+     }
      
 
     render(){
@@ -83,9 +90,7 @@ export default class AppIntro extends Component {
                 {this.state.currentPage < 2 ?
                 <View style={{flexDirection:'row',justifyContent:'space-around',marginBottom:10}}>
                 <View>
-                    <Text style={{fontSize:16,color:'#a1a2a6',fontWeight:'600'}} onPress={() => {
-                      AsyncStorageLib.setItem('Appintro','true')
-                      this.props.navigation.navigate('Login')}}>Skip</Text>
+                    <Text style={{fontSize:16,color:'#a1a2a6',fontWeight:'600'}} onPress={() => this.proceedTo}>Skip</Text>
                 </View>
                 <View style={styles.paginationWrapper}>
                     
@@ -100,10 +105,7 @@ export default class AppIntro extends Component {
                 <View style={{flexDirection:'row',justifyContent:'space-around',marginBottom:10}}>
                 <TouchableOpacity
              style={styles.button}
-             onPress={() => {
-               AsyncStorageLib.setItem('Appintro','true')
-               this.props.navigation.navigate('Login')
-              }}
+             onPress={() => this.proceedTo}
            >
              <Text style={{color:'#fff'}}> GET START NOW </Text>
      </TouchableOpacity>
