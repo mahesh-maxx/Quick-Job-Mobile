@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { StyleSheet, Text, View,Button, TouchableOpacity, Image, TextInput,Alert,Dimensions,ScrollView } from 'react-native';
 import CheckBox from 'expo-checkbox';
 import { EvilIcons, Entypo, MaterialIcons, AntDesign } from '@expo/vector-icons';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 const win = Dimensions.get('window');
 
 export default class RegisterScreen extends Component {
@@ -10,16 +11,82 @@ export default class RegisterScreen extends Component {
       this.state = {
         email:"",
         username:"",
-        name:"",
+        firstname:"",
+        lastname:"",
         password:"",
+        country: "IN",
+        mobile:"",
         userType:1,
         baseUrl:global.baseUrl,
-        agree_for_term:false
+        agree_for_term:false,
+        showPass:false
       }
+    }
+
+    register=()=>{
+      var url = this.state.baseUrl + '/register';
+      let data = new FormData()
+      data.append('firstname',this.state.firstname);
+      data.append('lastname',this.state.lastname);
+      data.append('username',this.state.username);
+      data.append('email',this.state.email);
+      data.append('country',this.state.country);
+      data.append('mobile',this.state.mobile);
+      data.append('password',this.state.password);
+      data.append('confirm_password',this.state.password);
+      fetch(url, {
+        method: 'POST',
+        body: data
+      }).then(function (response) {
+        return response.json();
+      }).then((result)=>{
+        if(result.message== 'User Registered Successfully.'){
+          
+          Alert.alert(
+            'Registration Success',
+            result.message,
+           [
+             
+              {text: 'OK', onPress: () => this.props.navigation.navigate("Login"), 
+        
+         },
+             
+           ],
+           {cancelable: false})
+        } else if(result.message === 'The mobile number already exists.' ||result.message === 'The Email already exists.' || result.message === 'The Username already exists.'){
+          Alert.alert(
+            'Registration Error',
+           result.message,
+           [
+             
+              {text: 'OK', onPress: () => console.log('Cancel Pressed'), 
+        
+         },
+             
+           ],
+           {cancelable: false})
+        }
+        else {
+          Alert.alert(
+            'Login Error',
+           'Something went wrong. Please try again later.',
+           [
+             
+              {text: 'OK', onPress: () => this.props.navigation.popToTop(), 
+        
+         },
+             
+           ],
+           {cancelable: false})
+        }
+      }).catch((err)=>{
+        console.log("err ",err)
+      })
     }
 
     render(){
         return (
+          <KeyboardAwareScrollView>
             <ScrollView >
           <View style={{ flex: 1,backgroundColor:'white'}}>
             <View style={{alignItems: 'center',marginTop: 60}}>
@@ -63,12 +130,18 @@ export default class RegisterScreen extends Component {
  </View>
             <View style={styles.usernameSection}>
             <EvilIcons name="user" size={28} color="black" style={styles.userIcon} />
-              <TextInput placeholder="Full Name" background="transparent" style={styles.input}
-              value={this.state.name}
-              onChangeText={(name) => this.setState({ name })} />
+              <TextInput placeholder="First Name" background="transparent" style={styles.input}
+              value={this.state.firstname}
+              onChangeText={(firstname) => this.setState({ firstname })} />
             </View>
             <View style={styles.usernameSection}>
             <EvilIcons name="user" size={28} color="black" style={styles.userIcon} />
+              <TextInput placeholder="Last Name" background="transparent" style={styles.input}
+              value={this.state.lastname}
+              onChangeText={(lastname) => this.setState({ lastname })} />
+            </View>
+            <View style={styles.usernameSection}>
+            <Entypo name="add-user" size={28} color="black" style={styles.userIcon} />
               <TextInput placeholder="Username" background="transparent" style={styles.input}
               value={this.state.username}
               onChangeText={(username) => this.setState({ username })} />
@@ -80,7 +153,15 @@ export default class RegisterScreen extends Component {
               onChangeText={(email) => this.setState({ email })} />
             </View>
             <View style={styles.usernameSection}>
-            <Entypo name="eye-with-line" size={24} color="black" style={styles.userIcon} />
+            <Entypo name="mobile" size={26} color="black" style={styles.userIcon} />
+              <TextInput placeholder="Mobile" background="transparent" style={styles.input}
+              value={this.state.mobile}
+              keyboardType = 'numeric'
+              maxLength={10}
+              onChangeText={(mobile) => this.setState({ mobile: mobile.replace(/[- #*;,.<>\{\}\[\]\\\/]/gi, '')  })} />
+            </View>
+            <View style={styles.usernameSection}>
+            <Entypo name={this.state.showPass ? 'eye' : 'eye-with-line'} size={24} color="black" style={styles.userIcon} onPress={()=>this.setState({ showPass:!this.state.showPass })} />
               <TextInput placeholder="Password" background="transparent" style={styles.input} 
               secureTextEntry={!this.state.showPass}
               value={this.state.password}
@@ -89,19 +170,22 @@ export default class RegisterScreen extends Component {
             <View style={{marginLeft:20,marginRight:20, marginTop:20, display:'flex', flexDirection:'row'}}>
       <CheckBox
           value={this.state.agree_for_term}
-          onValueChange={() => this.setState({ showPass:!this.state.agree_for_term })}
+          onValueChange={() => this.setState({ agree_for_term:!this.state.agree_for_term })}
         />
         <Text style={{marginLeft:10}}>By clicking on “Register” button you are agree to our Terms & Condition</Text>
       </View>
             <View style={{flex:1,alignItems:'center',marginTop:20,marginBottom:40}}>
             <TouchableOpacity
+            disabled={!this.state.agree_for_term || this.state.email == "" || this.state.firstname == "" || this.state.lastname == "" || this.state.mobile == "" || this.state.password == "" || this.state.username == "" }
          style={styles.button}
+         onPress={this.register}
        >
          <Text style={{color:'#fff'}}> Register </Text>
  </TouchableOpacity>
  </View>
           </View>
           </ScrollView>
+          </KeyboardAwareScrollView>
         );
         }
 }

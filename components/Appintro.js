@@ -1,7 +1,13 @@
 import React,{ Component} from "react";
-import { View, StatusBar, Image,Text,ScrollView,StyleSheet,Dimensions,PixelRatio,TouchableOpacity } from 'react-native';
+import { View, Image,Text,ScrollView,StyleSheet,Dimensions,TouchableOpacity } from 'react-native';
 const { width, height } = Dimensions.get('window');
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
+
+const user = {}
+AsyncStorageLib.getItem('userToken').then((token)=>{
+  user['token']=token
+})
+
 
 
 export default class AppIntro extends Component {
@@ -51,11 +57,9 @@ export default class AppIntro extends Component {
         this.scrollViewRef.current?.scrollTo({x: width * screenIndex, animated: true});
      };
 
-     proceedTo() {
+     proceedTo=()=> {
         AsyncStorageLib.setItem('Appintro','true')
-        const token = AsyncStorageLib.getItem('userToken')
-        const userName = AsyncStorageLib.getItem('UserName')
-        token != "" ? this.props.navigation.navigate('Login') :  this.props.navigation.navigate('Dashboard',{title:userName})
+        user.token == null ? this.props.navigation.navigate('Login') :  this.props.navigation.navigate('Dashboard')
      }
      
 
@@ -90,7 +94,7 @@ export default class AppIntro extends Component {
                 {this.state.currentPage < 2 ?
                 <View style={{flexDirection:'row',justifyContent:'space-around',marginBottom:10}}>
                 <View>
-                    <Text style={{fontSize:16,color:'#a1a2a6',fontWeight:'600'}} onPress={() => this.proceedTo}>Skip</Text>
+                    <Text style={{fontSize:16,color:'#a1a2a6',fontWeight:'600'}} onPress={this.proceedTo}>Skip</Text>
                 </View>
                 <View style={styles.paginationWrapper}>
                     
@@ -105,7 +109,7 @@ export default class AppIntro extends Component {
                 <View style={{flexDirection:'row',justifyContent:'space-around',marginBottom:10}}>
                 <TouchableOpacity
              style={styles.button}
-             onPress={() => this.proceedTo}
+             onPress={this.proceedTo}
            >
              <Text style={{color:'#fff'}}> GET START NOW </Text>
      </TouchableOpacity>
