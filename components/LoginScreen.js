@@ -24,11 +24,11 @@ export default class LoginScreen extends Component {
       data.append('user_type','user');
       var httpHeaders = { 'Authorization' : `bearer ${token}`};
       var myHeaders = new Headers(httpHeaders);
-      fetch(url, {
+      apifetch(url, {
         method: 'POST',
         body: data,
         headers:myHeaders
-      }).then(function (response) {
+      },this.props).then(function (response) {
         return response.json();
       }).then((result)=>{
         AsyncStorageLib.setItem('UserName',`${result.result.firstname}`)
@@ -45,15 +45,15 @@ export default class LoginScreen extends Component {
       let data = new FormData()
       data.append('username',this.state.username);
       data.append('password',this.state.password);
-      fetch(url, {
+      apifetch(url, {
         method: 'POST',
         body: data
-      }).then(function (response) {
+      },this.props).then(function (response) {
         return response.json();
       }).then((result)=>{
         if(result.message== 'User Login Successfully.'){
           AsyncStorageLib.setItem('userToken',result.token)
-          AsyncStorageLib.setItem('currentUserId',toString (result.user_id))
+          AsyncStorageLib.setItem('currentUserId',result.user_id.toString())
           this.getProfileData(result.user_id,result.token)
         } else if(result.message === 'Password mismatch' ||result.message === 'User does not exist'){
           Alert.alert(
@@ -62,19 +62,6 @@ export default class LoginScreen extends Component {
            [
              
               {text: 'OK', onPress: () => console.log('Cancel Pressed'), 
-        
-         },
-             
-           ],
-           {cancelable: false})
-        }
-        else {
-          Alert.alert(
-            'Login Error',
-           'Something went wrong. Please try again later.',
-           [
-             
-              {text: 'OK', onPress: () => this.props.navigation.popToTop(), 
         
          },
              

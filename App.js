@@ -19,6 +19,37 @@ import AppIntro from './components/Appintro';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {DrawerItems} from 'react-navigation-drawer'
 
+function logout (props){
+  AsyncStorageLib.removeItem("currentUserId");
+    AsyncStorageLib.removeItem("userToken");
+    AsyncStorageLib.removeItem("userName");
+    props.navigation.navigate("Login")
+}
+const originalFetch = global.fetch;
+
+global.apifetch = async (...args) => {
+    let [resource, config,props ] = args;
+    // request interceptor here
+    const response = await originalFetch(resource, config);
+    
+    if(response.status == '400'){
+      Alert.alert(
+        'Token Expired',
+       'Your Token has been expired. Please login again.',
+       [
+         
+          {text: 'OK', onPress: () => props.navigation.navigate("Saved"), 
+    
+     },
+         
+       ],
+       {cancelable: false})
+    }
+   
+    // response interceptor here
+    return response;
+};
+
 const user ={}
 AsyncStorageLib.getItem('UserName').then((name)=>{
   user['name']=name

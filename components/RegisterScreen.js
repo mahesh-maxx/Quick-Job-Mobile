@@ -34,10 +34,10 @@ export default class RegisterScreen extends Component {
       data.append('mobile',this.state.mobile);
       data.append('password',this.state.password);
       data.append('confirm_password',this.state.password);
-      fetch(url, {
+      apifetch(url, {
         method: 'POST',
         body: data
-      }).then(function (response) {
+      },this.props).then(function (response) {
         return response.json();
       }).then((result)=>{
         if(result.message== 'User Registered Successfully.'){
@@ -60,19 +60,6 @@ export default class RegisterScreen extends Component {
            [
              
               {text: 'OK', onPress: () => console.log('Cancel Pressed'), 
-        
-         },
-             
-           ],
-           {cancelable: false})
-        }
-        else {
-          Alert.alert(
-            'Login Error',
-           'Something went wrong. Please try again later.',
-           [
-             
-              {text: 'OK', onPress: () => this.props.navigation.popToTop(), 
         
          },
              
