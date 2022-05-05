@@ -28,7 +28,7 @@ export default class LoginScreen extends Component {
         method: 'POST',
         body: data,
         headers:myHeaders
-      },this.props).then(function (response) {
+      }).then(function (response) {
         return response.json();
       }).then((result)=>{
         AsyncStorageLib.setItem('UserName',`${result.result.firstname}`)
@@ -48,7 +48,7 @@ export default class LoginScreen extends Component {
       apifetch(url, {
         method: 'POST',
         body: data
-      },this.props).then(function (response) {
+      }).then(function (response) {
         return response.json();
       }).then((result)=>{
         if(result.message== 'User Login Successfully.'){

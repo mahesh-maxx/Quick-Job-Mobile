@@ -37,7 +37,7 @@ export default class RegisterScreen extends Component {
       apifetch(url, {
         method: 'POST',
         body: data
-      },this.props).then(function (response) {
+      }).then(function (response) {
         return response.json();
       }).then((result)=>{
         if(result.message== 'User Registered Successfully.'){

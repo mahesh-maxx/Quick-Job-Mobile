@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { createRef } from 'react';
 import { Component } from 'react';
 import 'react-native-gesture-handler'
 import { Alert,View,TouchableOpacity,SafeAreaView,Text } from 'react-native'
@@ -10,7 +10,6 @@ import LoginScreen from './components/LoginScreen'
 import RegisterScreen from './components/RegisterScreen';
 import ForgetpasswordScreen from './components/ForgetPassword';
 import { Ionicons } from '@expo/vector-icons'; 
-import Home from './components/Home';
 import NotificationScreen from './components/Notifications';
 import ProfileScreen from './components/Profile';
 import SavedJobScreen from './components/Saved';
@@ -18,17 +17,25 @@ import ChatScreen from './components/Chat';
 import AppIntro from './components/Appintro';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {DrawerItems} from 'react-navigation-drawer'
+import { HomeScreenNavigator} from './components/helper/CustomNavigation'
 
-function logout (props){
+export const navigationRef = createRef()
+
+export function navigate(name, params) {
+    navigationRef.current?._navigation.navigate(name, params);
+}
+
+function logout(){
   AsyncStorageLib.removeItem("currentUserId");
     AsyncStorageLib.removeItem("userToken");
     AsyncStorageLib.removeItem("userName");
-    props.navigation.navigate("Login")
+    navigate("Login",{})
 }
+
 const originalFetch = global.fetch;
 
 global.apifetch = async (...args) => {
-    let [resource, config,props ] = args;
+    let [resource, config ] = args;
     // request interceptor here
     const response = await originalFetch(resource, config);
     
@@ -38,7 +45,7 @@ global.apifetch = async (...args) => {
        'Your Token has been expired. Please login again.',
        [
          
-          {text: 'OK', onPress: () => props.navigation.navigate("Saved"), 
+          {text: 'OK', onPress: () => logout()
     
      },
          
@@ -91,6 +98,7 @@ class NotificationButton extends Component {
 }
 
 function setTitle(navigation) {
+  console.log("nava ",JSON.stringify(navigation))
   const { params } = navigation.state;
   const title = params && params.title  ? `Hello ${params.title}` : user?.name != null ? `Hello ${user.name}` : "Hello User"
   return title
@@ -155,7 +163,7 @@ const AuthStack = createStackNavigator(
 const DashboardStackNavigator = createStackNavigator(
   {
     Dashboard:{
-      screen: Home,
+      screen: HomeScreenNavigator,
       navigationOptions: ({ navigation }) => ({
         title: setTitle(navigation),
         headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
@@ -164,7 +172,7 @@ const DashboardStackNavigator = createStackNavigator(
           backgroundColor: "#653ef0",
         },
         headerTintColor: "#fff",
-      }),
+      })
     }
   }
 ); 
@@ -233,7 +241,8 @@ const Drawer = createDrawerNavigator(
           color="#653ef0"
         />
         ),
-      },  
+        options:{drawerItemStyle: { height: 0 } }
+      }
     },
     screen2:{
       screen: ProfileStackNavigator,
@@ -294,13 +303,14 @@ const DrawerNavigator = createStackNavigator({
   Notification:{screen:NotificationScreen,navigationOptions: { title: "Notifications" }},
   AppIntro:{screen:AppIntro,navigationOptions: { headerShown: false }},
   Profile:{screen:ProfileScreen,navigationOptions: { title: "Profile" }},
+  Login:{screen:LoginScreen,navigationOptions: { headerShown: false }}
 
 
 });
 
 const AppStack = DrawerNavigator
 
-export default createAppContainer(
+const AppContainer = createAppContainer(
   createSwitchNavigator(
     {
       Flash: FlashScreen,
@@ -308,10 +318,19 @@ export default createAppContainer(
       Auth: AuthStack
     },
     {
-      initialRouteName: "Flash",
+      initialRouteName: "Flash"
     }
   )
-);
+)
+export default class App extends React.Component {
 
+  render() {
+    return (
+      <AppContainer
+        ref={navigationRef}
+      />
+    );
+  }
+}
 
 

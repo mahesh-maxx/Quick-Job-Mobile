@@ -28,7 +28,6 @@ export default class Home extends Component {
 
   render(){
   return (
-    <NavigationContainer>
       <Tab.Navigator initialRouteName='Home'
         screenOptions={({ route,navigation }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -87,16 +86,7 @@ export default class Home extends Component {
         />
         <Tab.Screen name="Saved" component={SavedJobScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
-        <Tab.Screen name="JobCategory" component={JobCategoryScreen} options={({ navigation }) => ({
-          title:'What job you want?',
-          headerLeft:()=> <BackButton navigation={navigation} />,
-          headerShown:true,
-          tabBarIcon:null,
-          headerStatusBarHeight:2,
-          tabBarButton:()=>{return null},
-        })} />
       </Tab.Navigator>
-    </NavigationContainer>
   );
       }
 }

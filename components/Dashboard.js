@@ -58,7 +58,7 @@ export default class DashboardScreen extends Component{
     apifetch(url, {
       method: 'POST',
       body: {}
-    },this.props).then(function (response) {
+    }).then(function (response) {
       return response.json();
     }).then((result)=>{
       if(result.result.length > 0){
@@ -74,7 +74,7 @@ export default class DashboardScreen extends Component{
     apifetch(url, {
       method: 'POST',
       body: {}
-    },this.props).then(function (response) {
+    }).then(function (response) {
       return response.json();
     }).then((result)=>{
       if(result.result.length > 0){
@@ -98,7 +98,7 @@ export default class DashboardScreen extends Component{
       method: 'POST',
       body: data,
       headers:myHeaders
-    },this.props).then(function (response) {
+    }).then(function (response) {
       return response.json();
     }).then((result)=>{
       console.log("rs ",result)
@@ -172,12 +172,12 @@ export default class DashboardScreen extends Component{
           <View style={{ marginTop: 10 }}>
             <TouchableOpacity style={{ flexDirection: 'row' }}>
               <Ionicons name="location" size={24} color="#000" />
-              <Text style={{ color: '#000' }}>{this.state.location ? this.state.location[0].city : 'New Delhi'}</Text>
+              <Text style={{ color: '#000' }}>{this.state.location ? this.state.location[0]?.city : 'New Delhi'}</Text>
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: 'row',justifyContent:'space-between' }}>
           <Text style={{fontWeight:'bold',fontSize: 20,paddingLeft:5}}> All Category</Text>
-          {/* <Text style={{paddingRight:10,paddingTop:10}} onPress={() => this.props.navigation.navigate('JobCategory')}>{ 'See All >' }</Text> */}
+          <Text style={{paddingRight:10,paddingTop:10}} onPress={() => this.props.navigation.navigate('JobCategory')}>{ 'See All >' }</Text>
           </View>
           <ScrollView 
         ref={(scrollView) => { this.scrollView = scrollView; }}
