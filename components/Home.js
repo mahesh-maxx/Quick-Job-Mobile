@@ -5,7 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import DashboardScreen from './Dashboard';
 import SavedJobScreen from './Saved';
 import ProfileScreen from './Profile';
-import ChatScreen from './Chat';
+import AppliedJobScreen from './Applied';
 import JobCategoryScreen from './JobCategory';
 import { Image,View,TouchableOpacity } from 'react-native'
 
@@ -43,7 +43,7 @@ export default class Home extends Component {
                   color={color}
                 />
               );
-            } else if (route.name === 'Saved') {
+            } else if (route.name === 'Favourite Job') {
               return (
                 <Ionicons
                   name={focused ? 'bookmark' : 'bookmark-outline'}
@@ -51,10 +51,10 @@ export default class Home extends Component {
                   color={color}
                 />
               );
-            } else if (route.name === 'Chat') {
+            } else if (route.name === 'Applied Job') {
                 return (
                   <Ionicons
-                    name={focused ? 'chatbubbles' : 'chatbubbles-outline'}
+                    name={focused ? 'md-briefcase' : 'md-briefcase-outline'}
                     size={size}
                     color={color}
                   />
@@ -76,15 +76,15 @@ export default class Home extends Component {
           tabBarLabel: navigation.isFocused() ? route.name : ''
         })}
       >
-           <Tab.Screen
-          name="Chat"
-          component={ChatScreen}
-        />
-        <Tab.Screen
+         <Tab.Screen
           name="Home"
           component={DashboardScreen}
         />
-        <Tab.Screen name="Saved" component={SavedJobScreen} />
+           <Tab.Screen
+          name="Applied Job"
+          component={AppliedJobScreen}
+        />
+        <Tab.Screen name="Favourite Job" component={SavedJobScreen} />
         <Tab.Screen name="Profile" component={ProfileScreen} />
       </Tab.Navigator>
   );

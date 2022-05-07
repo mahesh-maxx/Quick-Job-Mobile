@@ -6,6 +6,7 @@ import JobCategoryScreen from './JobCategory';
 const { width } = Dimensions.get('window');
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import Spinner from 'react-native-loading-spinner-overlay';
 const user = {}
 
 export default class DashboardScreen extends Component{
@@ -15,6 +16,7 @@ export default class DashboardScreen extends Component{
       location:null,
       baseUrl:global.baseUrl,
       errorMsg:null,
+      loading:false,
       allJobs:[],
       jobCategories:[],
       companies:[
@@ -54,6 +56,9 @@ export default class DashboardScreen extends Component{
   }
 
   getAllJobs = () => {
+    this.setState({
+      loading: true
+    })
     var url = this.state.baseUrl + '/allJobs';
     apifetch(url, {
       method: 'POST',
@@ -61,15 +66,24 @@ export default class DashboardScreen extends Component{
     }).then(function (response) {
       return response.json();
     }).then((result)=>{
+      this.setState({
+        loading: false
+      })
       if(result.result.length > 0){
         this.setState({allJobs:result.result})
       } 
     }).catch((err)=>{
+      this.setState({
+        loading: false
+      })
       console.log("err ",err)
     })
   }
 
   getJobCategory = () => {
+    this.setState({
+      loading: true
+    })
     var url = this.state.baseUrl + '/allJobcategory';
     apifetch(url, {
       method: 'POST',
@@ -77,15 +91,24 @@ export default class DashboardScreen extends Component{
     }).then(function (response) {
       return response.json();
     }).then((result)=>{
+      this.setState({
+        loading: false
+      })
       if(result.result.length > 0){
         this.setState({jobCategories:result.result})
       } 
     }).catch((err)=>{
+      this.setState({
+        loading: false
+      })
       console.log("err ",err)
     })
   }
 
   applyJob= (id,type)=>{
+    this.setState({
+      loading: true
+    })
     const endpoint = type === 'apply' ? '/applyJob' : '/addfavouritejob'
     var url = this.state.baseUrl + endpoint;
     var httpHeaders = { 'Authorization' : `bearer ${user.token}`};
@@ -101,8 +124,10 @@ export default class DashboardScreen extends Component{
     }).then(function (response) {
       return response.json();
     }).then((result)=>{
-      console.log("rs ",result)
-      if(result.message== 'Job Applied Successfully.'){
+      this.setState({
+        loading: false
+      })
+      if(result.message== 'Job Applied Successfully.' || result.message=="Already applied this job."){
         Alert.alert(
           'Job Apply',
           result.message,
@@ -114,7 +139,7 @@ export default class DashboardScreen extends Component{
            
          ],
          {cancelable: false})
-      } else if(result.message== 'Job Added in Favourites.'){
+      } else if(result.message== 'Job Added in Favourites.' || result.message== "Already Added in Favourites." ){
         Alert.alert(
           'Save Job ',
           result.message,
@@ -128,6 +153,9 @@ export default class DashboardScreen extends Component{
          {cancelable: false})
       }
     }).catch((err)=>{
+      this.setState({
+        loading: false
+      })
       console.log("err ",err)
     })
   }
@@ -169,6 +197,7 @@ export default class DashboardScreen extends Component{
     return (
       <ScrollView>
         <View style={{ flex: 1 }}>
+        {this.state.loading && <Spinner visible={true} style={styles.loading} />}
           <View style={{ marginTop: 10 }}>
             <TouchableOpacity style={{ flexDirection: 'row' }}>
               <Ionicons name="location" size={24} color="#000" />
@@ -373,5 +402,14 @@ applybutton: {
   height: 30,
   borderRadius: 10,
   marginRight:5
-}
+},
+loading: {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+  alignItems: 'center',
+  justifyContent: 'center'
+},
 });

@@ -1,9 +1,10 @@
 import { Component } from 'react';
-import { StyleSheet, Text, View,Button, TouchableOpacity, Image, TextInput,Alert,Dimensions } from 'react-native';
+import { StyleSheet, Text, View,Button, TouchableOpacity, ActivityIndicator, TextInput,Alert,Dimensions } from 'react-native';
 import CheckBox from 'expo-checkbox';
 import { EvilIcons,Entypo } from '@expo/vector-icons';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import Spinner from 'react-native-loading-spinner-overlay';
 const win = Dimensions.get('window');
 
 export default class LoginScreen extends Component {
@@ -13,7 +14,8 @@ export default class LoginScreen extends Component {
         username:"",
         password:"",
         showPass:false,
-        baseUrl:global.baseUrl
+        baseUrl:global.baseUrl,
+        loading:false
       }
     }
 
@@ -41,6 +43,9 @@ export default class LoginScreen extends Component {
     }
 
     login=()=>{
+      this.setState({
+        loading: true
+      })
       var url = this.state.baseUrl + '/login';
       let data = new FormData()
       data.append('username',this.state.username);
@@ -51,6 +56,7 @@ export default class LoginScreen extends Component {
       }).then(function (response) {
         return response.json();
       }).then((result)=>{
+        this.setState({loading:false})
         if(result.message== 'User Login Successfully.'){
           AsyncStorageLib.setItem('userToken',result.token)
           AsyncStorageLib.setItem('currentUserId',result.user_id.toString())
@@ -61,7 +67,7 @@ export default class LoginScreen extends Component {
            'The username` or password you entered is not valid',
            [
              
-              {text: 'OK', onPress: () => console.log('Cancel Pressed'), 
+              {text: 'OK', onPress: () => this.setState({username:"",password:""}), 
         
          },
              
@@ -69,6 +75,7 @@ export default class LoginScreen extends Component {
            {cancelable: false})
         }
       }).catch((err)=>{
+        this.setState({loading:false})
         console.log("err ",err)
       })
     }
@@ -77,6 +84,7 @@ export default class LoginScreen extends Component {
         return (
           <KeyboardAwareScrollView>
           <View style={{ flex: 1,backgroundColor:'white'}}>
+         {this.state.loading && <Spinner visible={true} style={styles.loading} />}
             <View style={{alignItems: 'center',marginTop: 60}}>
               <Text style={{textAlign: 'center',width:300, fontSize:20,marginTop:30}}>Welcome Back!</Text>
               <Text style={{textAlign: 'center', fontSize:14,marginTop:10,marginBottom:30}}>Don't have an account? 
@@ -109,7 +117,7 @@ export default class LoginScreen extends Component {
               onChangeText={(username) => this.setState({ username })} />
             </View>
             <View style={styles.usernameSection}>
-            <Entypo name="eye-with-line" size={24} color="black" style={styles.userIcon} />
+            <Entypo name={this.state.showPass ? 'eye' : 'eye-with-line'} size={24} color="black" style={styles.userIcon} onPress={()=>this.setState({ showPass:!this.state.showPass })}/>
               <TextInput placeholder="Password" background="transparent" style={styles.input} 
               secureTextEntry={!this.state.showPass}
               value={this.state.password}
@@ -187,5 +195,17 @@ facebook:{
     flexDirection:'row',
     textAlignVertical:'center',
     alignItems: 'center'
-}
+},
+loading: {
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  top: 0,
+  bottom: 0,
+  alignItems: 'center',
+  justifyContent: 'center'
+},
+spinnerTextStyle: {
+  color: '#FFF'
+},
 })

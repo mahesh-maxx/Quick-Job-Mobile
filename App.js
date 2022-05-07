@@ -18,6 +18,7 @@ import AppIntro from './components/Appintro';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import {DrawerItems} from 'react-navigation-drawer'
 import { HomeScreenNavigator} from './components/helper/CustomNavigation'
+import AppliedJobScreen from './components/Applied';
 
 export const navigationRef = createRef()
 
@@ -98,7 +99,6 @@ class NotificationButton extends Component {
 }
 
 function setTitle(navigation) {
-  console.log("nava ",JSON.stringify(navigation))
   const { params } = navigation.state;
   const title = params && params.title  ? `Hello ${params.title}` : user?.name != null ? `Hello ${user.name}` : "Hello User"
   return title
@@ -199,7 +199,7 @@ const SavedStackNavigator = createStackNavigator(
     Dashboard:{
       screen: SavedJobScreen,
       navigationOptions: ({ navigation }) => ({
-        title: "Saved Job",
+        title: "Favourite Job",
         headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
         headerRight: () =>  <NotificationButton navigationProps={navigation} />,
         headerStyle: {
@@ -228,6 +228,24 @@ const ChatStackNavigator = createStackNavigator(
   }
 ); 
 
+
+
+const AppliedJobStackNavigator = createStackNavigator(
+  {
+    Dashboard:{
+      screen: AppliedJobScreen,
+      navigationOptions: ({ navigation }) => ({
+        title: "Applied Job",
+        headerLeft:  () =>  <NavigationDrawerStructure navigationProps={navigation} />,
+        headerRight: () =>  <NotificationButton navigationProps={navigation} />,
+        headerStyle: {
+          backgroundColor: "#653ef0",
+        },
+        headerTintColor: "#fff",
+      }),
+    }
+  }
+); 
 const Drawer = createDrawerNavigator(
   {
     Screen1: {
@@ -271,12 +289,12 @@ const Drawer = createDrawerNavigator(
       }, 
     },
     screen4:{
-      screen: ChatStackNavigator,
+      screen: AppliedJobStackNavigator,
       navigationOptions: {
-        drawerLabel: "Messages",
+        drawerLabel: "Applied Job",
         drawerIcon: (
           <Ionicons
-                  name={'chatbubbles'}
+                  name={'md-briefcase'}
                   size={25}
                   color="#653ef0"
                 />
