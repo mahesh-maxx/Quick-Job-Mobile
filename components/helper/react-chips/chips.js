@@ -9,7 +9,7 @@ const Chips = (props) => {
     return (
         <TouchableOpacity style={[styles.chip, chipStyle]} onPress={onPress}>
             <View style={{ flexDirection: 'row' }}>
-                <Text style={[{ paddingHorizontal: 5 }]}>{value}</Text>
+                <Text style={[{ paddingHorizontal: 5 }]}>{value.name}</Text>
                 <View style={styles.chipCloseBtn}><Text style={styles.chipCloseBtnTxt}>x</Text></View>
             </View>
         </TouchableOpacity>

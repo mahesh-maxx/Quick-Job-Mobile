@@ -4,10 +4,12 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet, Alert } from 'react-native';
 import Chips from './chips';
+import SelectDropdown from 'react-native-select-dropdown'
 
 class ReactChipsInput extends React.Component {
     constructor(props) {
         super(props);
+        this.myRef = React.createRef();
         this.state = {
             isFocused: false,
             chips: (props.initialChips) ? props.initialChips : [],
@@ -47,8 +49,21 @@ class ReactChipsInput extends React.Component {
             if (this.props.alertRequired) Alert.alert('Added Successfully', 'Chip Element already present');
         }
     }
+
+    handleOnSelect = (selectedItem) => {
+        const chips = this.state.chips
+        chips.push(selectedItem)
+        this.setState({
+            chips: chips,
+            inputText: "",
+            isFocused: false
+        }, () => {
+            this.props.onChangeChips && this.props.onChangeChips(this.state.chips)// Only contains one property!
+            this.myRef.current.reset()
+        });
+    }
     render() {
-        const { label, chipStyle, inputStyle, labelStyle, labelOnBlur,editEnable } = this.props;
+        const { label, chipStyle, inputStyle, labelStyle, labelOnBlur,editEnable,defaultText,chipsData } = this.props;
         const inputLabel = (label) ? label : 'Enter your text'
         const { isFocused, inputText } = this.state;
         const defaultLabel = {
@@ -75,16 +90,24 @@ class ReactChipsInput extends React.Component {
         return (
             <View>
                 {editEnable ? <View style={{ paddingTop: 18, marginTop: 15 }}>
-                    <Text style={[defaultLabel, defaultLabelTextStyle, labelTextStyle]}>
-                        {inputLabel}
-                    </Text>
-                    <TextInput
-                        style={[styles.textInput, inputStyle]}
-                        onFocus={this.handleFocus}
-                        onChangeText={(text) => this.handleChangeText(text)}
-                        onSubmitEditing={this.handleBlur}
-                        value={inputText}
-                    />
+                <SelectDropdown
+                    data={chipsData}
+                    defaultButtonText={defaultText}
+                    ref={this.myRef}
+                    onSelect={(selectedItem, index) => {
+                        this.handleOnSelect(selectedItem)
+                    }}
+                    buttonTextAfterSelection={(selectedItem, index) => {
+                        // text represented after item is selected
+                        // if data array is an array of objects then return selectedItem.property to render after item is selected
+                        return selectedItem.name
+                    }}
+                    rowTextForSelection={(item, index) => {
+                        // text represented for each item in dropdown
+                        // if data array is an array of objects then return item.property to represent item in dropdown
+                        return item.name
+                    }}
+                />
                 </View> : <View></View>}
                 <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center' }}>
                     {chips}

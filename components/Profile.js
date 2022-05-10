@@ -7,15 +7,6 @@ import ReactChipsInput from './helper/react-chips';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import AsyncStorageLib from '@react-native-async-storage/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
-import SelectInput from 'react-native-select-input-ios'
-const user = {}
-AsyncStorageLib.getItem('userToken').then((token)=>{
-  user['token']=token
-})
-
-AsyncStorageLib.getItem('currentUserId').then((userid)=>{
-    user['userid']=userid
-})
 
 export default class ProfileScreen extends React.Component {
     constructor(props){
@@ -24,6 +15,7 @@ export default class ProfileScreen extends React.Component {
           loading:false,
           baseUrl:global.baseUrl,
           availableSkills:[],
+          totalSkills:[],
           profileData:{},
           college:"St. Mount College",
           highschool:"New High School",
@@ -33,23 +25,99 @@ export default class ProfileScreen extends React.Component {
           skillEdit:false,
           selectedSkills:[],
           selectedValue:0,
-          options : [{ value: 0, label: '0' },{ value: 1, label: '1' },{ value: 2, label: '2' }]
-          
+          educationLevels:[],
+          examDegree:[]
         }
     }
 
     componentDidMount(){
       this.getProfileData()
-      this.getSkillData()
+      this.getLevelOfEducation();
+      this.getExamDegree()
     }
 
-    setSkills=()=>{
-      var skills = this.state.availableSkills.filter( (o1)=> {
-        return this.state.profileData?.skills.some(function (o2) {
-           return o1.id === o2.id// return the ones with equal id
-       });
-    })
-      
+    setSelectedSkills=()=>{
+      return this.state.totalSkills.filter( (o1)=> {
+        return this.state.profileData?.skill.some(function (o2) {
+           return o1.id == o2// return the ones with equal id
+        });
+      })  
+    }
+
+    setAvailableSkills=()=>{
+        return this.state.totalSkills.filter( (o1)=> {
+          return !this.state.profileData?.skill.some(function (o2) {
+            return o1.id == o2// return the ones with equal id
+          });
+      })  
+    }
+
+    setSkills =()=>{
+      const availableSkills = this.setAvailableSkills()
+      this.setState({availableSkills:availableSkills})
+    }
+
+    getLevelOfEducation = ()=>{
+      this.setState({
+        loading: true
+      })
+    var url = this.state.baseUrl + '/levelOfEducation';
+    var httpHeaders = { 'Authorization' : `bearer ${global.UserData?.token}`};
+    var myHeaders = new Headers(httpHeaders);
+    let data = new FormData()
+    data.append('userid',global.UserData?.userid);
+    data.append('user_type','user');
+    apifetch(url, {
+        method: 'POST',
+        body: data,
+        headers:myHeaders
+      }).then(function (response) {
+        return response.json();
+      }).then((result)=>{
+        this.setState({
+            loading: false
+          })
+          if(result.result?.length > 0){
+            this.setState({educationLevels:result.result})
+          } 
+      }).catch((err)=>{
+        this.setState({
+            loading: false
+          })
+        console.log("err ",err)
+      })
+    }
+
+
+    getExamDegree = ()=>{
+      this.setState({
+        loading: true
+      })
+    var url = this.state.baseUrl + '/examsDegree';
+    var httpHeaders = { 'Authorization' : `bearer ${global.UserData?.token}`};
+    var myHeaders = new Headers(httpHeaders);
+    let data = new FormData()
+    data.append('userid',global.UserData?.userid);
+    data.append('user_type','user');
+    apifetch(url, {
+        method: 'POST',
+        body: data,
+        headers:myHeaders
+      }).then(function (response) {
+        return response.json();
+      }).then((result)=>{
+        this.setState({
+            loading: false
+          })
+          if(result.result?.length > 0){
+            this.setState({examDegree:result.result})
+          } 
+      }).catch((err)=>{
+        this.setState({
+            loading: false
+          })
+        console.log("err ",err)
+      })
     }
 
     getSkillData=()=>{
@@ -62,7 +130,6 @@ export default class ProfileScreen extends React.Component {
     let data = new FormData()
     data.append('userid',global.UserData?.userid);
     data.append('user_type','user');
-    console.log("hec ",data,myHeaders)
     apifetch(url, {
         method: 'POST',
         body: data,
@@ -70,12 +137,14 @@ export default class ProfileScreen extends React.Component {
       }).then(function (response) {
         return response.json();
       }).then((result)=>{
-        console.log("asd ",result)
         this.setState({
             loading: false
           })
           if(result.result?.length > 0){
-            this.setState({availableSkills:result.result})
+            this.setState({totalSkills:result.result})
+            const selectedSkills = this.setSelectedSkills()
+            const availableSkills = this.setAvailableSkills()
+            this.setState({selectedSkills:selectedSkills,availableSkills:availableSkills})
           } 
       }).catch((err)=>{
         this.setState({
@@ -106,12 +175,25 @@ export default class ProfileScreen extends React.Component {
             loading: false
           })
           this.setState({profileData:result.result})
+          this.getSkillData()
       }).catch((err)=>{
         this.setState({
             loading: false
           })
         console.log("err ",err)
       })
+    }
+
+    onChipChanges=(chips)=>{
+      const skills = []
+      chips.forEach(element => {
+        skills.push(element.id)
+      });
+      var profileData = {...this.state.profileData}
+      profileData.skill = skills
+      this.setState({profileData,selectedSkills:chips},()=>{
+        this.setSkills()
+      })     
     }
     render(){
     return (
@@ -335,6 +417,24 @@ export default class ProfileScreen extends React.Component {
   </View>
             </View>
             <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:0,padding:10}}>
+                <Text style={{color:'#000',fontSize:16}}>SKILLS</Text>
+                <Text style={{color:'#4267B2',fontSize:12}} onPress={() => this.setState({ profileEdit:!this.state.profileEdit })} >{this.state.profileEdit ? 'Save' : 'Edit'}</Text>
+            </View>
+            <View style={styles.information}>
+            < ReactChipsInput 
+    label="Enter Skills" initialChips={this.state.selectedSkills} 
+    onChangeChips={(chips) => {this.onChipChanges(chips)}} 
+    alertRequired={true} 
+    chipsData={this.state.availableSkills}
+    defaultText="Select Skills"
+    chipStyle={{ borderColor: 'blue', backgroundColor: 'grey' }} 
+    inputStyle={{fontSize: 14}} 
+    labelStyle={{ color: 'blue'}} 
+    labelOnBlur={{ color: '#666' }}
+    editEnable={this.state.profileEdit} />
+
+            </View>
+            <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:0,padding:10}}>
                 <Text style={{color:'#000',fontSize:16}}>EDUCATION</Text>
                 <Text style={{color:'#4267B2',fontSize:12}} onPress={() => this.setState({ eduEdit:!this.state.eduEdit })}>{this.state.eduEdit ? 'Save': 'Edit'}</Text>
             </View>
@@ -370,36 +470,6 @@ export default class ProfileScreen extends React.Component {
     />
   </View>
             </View>
-            <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:0,padding:10}}>
-                <Text style={{color:'#000',fontSize:16}}>SKILLS</Text>
-                <Text style={{color:'#4267B2',fontSize:12}} onPress={() => this.setState({ skillEdit:!this.state.skillEdit })} >{this.state.skillEdit ? 'Save' : 'Edit'}</Text>
-            </View>
-            <View style={styles.information}>
-            < ReactChipsInput 
-    label="Enter Skills" initialChips={this.state.skills} 
-    onChangeChips={(chips) => this.setState({skills:chips})} 
-    alertRequired={true} 
-    chipStyle={{ borderColor: 'blue', backgroundColor: 'grey' }} 
-    inputStyle={{fontSize: 14}} 
-    labelStyle={{ color: 'blue'}} 
-    labelOnBlur={{ color: '#666' }}
-    editEnable={this.state.skillEdit} />
-
-            </View>
-            <Picker
-          enabled={true}
-          onValueChange={(selected)=>console.log("sa ",selected)}
-          style={styles.defaultLabelStyle}
-          selectedValue={this.state.selectedValue}
-        >
-          {this.state.options.map(option => (
-            <Picker.Item
-              key={option.value}
-              value={option.value}
-              label={option.label}
-            />
-          ))}
-        </Picker>
         </View>
       </KeyboardAwareScrollView>
     )
