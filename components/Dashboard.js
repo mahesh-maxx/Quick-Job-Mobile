@@ -111,10 +111,10 @@ export default class DashboardScreen extends Component{
     })
     const endpoint = type === 'apply' ? '/applyJob' : '/addfavouritejob'
     var url = this.state.baseUrl + endpoint;
-    var httpHeaders = { 'Authorization' : `bearer ${user.token}`};
+    var httpHeaders = { 'Authorization' : `bearer ${global.UserData?.token}`};
     var myHeaders = new Headers(httpHeaders);
     let data = new FormData()
-    data.append('userid',user.userid);
+    data.append('userid',global.UserData?.userid);
     data.append('user_type','user');
     data.append('jobid',id);
     apifetch(url, {

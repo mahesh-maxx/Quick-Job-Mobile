@@ -34,6 +34,14 @@ function logout(){
 }
 
 const originalFetch = global.fetch;
+global.UserData = {}
+AsyncStorageLib.getItem('userToken').then((token)=>{
+  UserData['token']=token
+})
+
+AsyncStorageLib.getItem('currentUserId').then((userid)=>{
+  UserData['userid']=userid
+})
 
 global.apifetch = async (...args) => {
     let [resource, config ] = args;
@@ -258,8 +266,7 @@ const Drawer = createDrawerNavigator(
           size={25}
           color="#653ef0"
         />
-        ),
-        options:{drawerItemStyle: { height: 0 } }
+        )
       }
     },
     screen2:{

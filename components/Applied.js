@@ -32,10 +32,10 @@ export default class AppliedJobScreen extends Component {
             loading: true
           })
         var url = this.state.baseUrl + '/appliedJob';
-        var httpHeaders = { 'Authorization' : `bearer ${user.token}`};
+        var httpHeaders = { 'Authorization' : `bearer ${global.UserData?.token}`};
         var myHeaders = new Headers(httpHeaders);
         let data = new FormData()
-        data.append('userid',user.userid);
+        data.append('userid',global.UserData?.userid);
         data.append('user_type','user');
         apifetch(url, {
             method: 'POST',
@@ -47,7 +47,7 @@ export default class AppliedJobScreen extends Component {
             this.setState({
                 loading: false
               })
-            if(result.result.length > 0){
+            if(result.result?.length > 0){
               this.setState({appliedJobList:result.result})
             } 
           }).catch((err)=>{

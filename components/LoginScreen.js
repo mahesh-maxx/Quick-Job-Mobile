@@ -60,6 +60,8 @@ export default class LoginScreen extends Component {
         if(result.message== 'User Login Successfully.'){
           AsyncStorageLib.setItem('userToken',result.token)
           AsyncStorageLib.setItem('currentUserId',result.user_id.toString())
+          global.UserData.token=result.token
+          global.UserData.userid=result.user_id.toString()
           this.getProfileData(result.user_id,result.token)
         } else if(result.message === 'Password mismatch' ||result.message === 'User does not exist'){
           Alert.alert(
